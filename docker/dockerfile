@@ -39,6 +39,6 @@ ENV CADDY_GLOBAL_OPTIONS=debug
 
 # Expose port 80
 EXPOSE 80
-EXPOSE 8081
+EXPOSE 5173
 
 CMD ["bash", "./docker/entrypoint.sh"]
