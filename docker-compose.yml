@@ -1,14 +1,6 @@
 services:
   php:
     env_file: ./.env
-    environment:
-      REDIS_HOST: redis
-
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_DATABASE: pms
-      DB_USERNAME: root
-      DB_PASSWORD: root
     build:
       context: .
       dockerfile: docker/dockerfile
@@ -18,20 +10,3 @@ services:
       - ./:/app
     ports:
       - "80:80"
-
-  redis:
-    container_name: redis
-    image: redis:8.2-alpine
-    ports:
-      - "6379:6379"
-
-  mysql:
-    container_name: mysql
-    image: mysql:8.3.0
-    command:
-      --mysql-native-password=ON
-      --sql_mode=NO_ENGINE_SUBSTITUTION
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-    ports:
-      - "3306:3306"

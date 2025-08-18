@@ -1,8 +1,10 @@
 #! /bin/bash
 
-echo "Starting log reading..."
-echo "Log limpo com sucesso!" > ./storage/logs/laravel.log
-tail -f ./storage/logs/laravel.log &
+php artisan migrate
+
+if [ ! -f /app/.seeded ]; then
+    php artisan db:seed && touch /app/.seeded
+fi
 
 if [[ -z "$LOCAL" ]]; then
     echo "Starting production octane..."
