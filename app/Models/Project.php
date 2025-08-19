@@ -21,7 +21,7 @@ class Project extends Model
     /** @use HasFactory<\Database\Factories\ProjectFactory> */
     use HasFactory;
 
-    public function user()
+    public function creator()
     {
         return $this->belongsTo(User::class, 'creator_id');
     }
