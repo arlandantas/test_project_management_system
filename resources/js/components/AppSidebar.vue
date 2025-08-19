@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { Terminal, Folder, LayoutGrid } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -23,9 +23,9 @@ const footerNavItems: NavItem[] = [
         icon: Folder,
     },
     {
-        title: 'Developed By Arlan',
+        title: 'Arlan Dantas',
         href: 'https://arlandantas.github.io/',
-        icon: BookOpen,
+        icon: Terminal,
     },
 ];
 </script>
