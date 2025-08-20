@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Delete, Search } from 'lucide-vue-next';
+import useUrl from '@/composables/useUrl';
 
-const currentUrl = new URL(window.location.href);
+const { currentUrl, navigate } = useUrl();
 const initialSearch = currentUrl.searchParams.get('search') || '';
 const searchQuery = ref<string>(initialSearch);
 
@@ -14,7 +15,8 @@ const doSearch = () => {
         } else {
             currentUrl.searchParams.set('search', searchValue);
         }
-        window.location.href = currentUrl.toString();
+        currentUrl.searchParams.delete('page');
+        navigate();
     }
 };
 
