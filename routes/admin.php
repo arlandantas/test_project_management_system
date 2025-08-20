@@ -5,6 +5,8 @@ use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('projects', ProjectController::class);
-    Route::resource('tasks', TaskController::class);
+    Route::resources([
+        'projects' => ProjectController::class,
+        'tasks' => TaskController::class,
+    ]);
 });

@@ -5,6 +5,7 @@ import { Head } from '@inertiajs/vue3';
 import OrderableTh from '@/components/ui/table/OrderableTh.vue';
 import SearchInput from '@/components/ui/input/SearchInput.vue';
 import Pagination from '@/components/ui/table/Pagination.vue';
+import useUrl from '@/composables/useUrl';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,6 +38,20 @@ defineProps<{
     }
 }>();
 
+const { currentUrl, navigate } = useUrl();
+const currentStatusFilter = currentUrl.searchParams.get('status');
+
+const updateStatusFilter = (status:string) => {
+    const currentStatus = currentUrl.searchParams.get('status');
+    if (currentStatus === status) {
+        currentUrl.searchParams.delete('status');
+    } else {
+        currentUrl.searchParams.set('status', status);
+    }
+    currentUrl.searchParams.delete('page');
+    navigate();
+}
+
 </script>
 
 <template>
@@ -44,17 +59,30 @@ defineProps<{
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
-            <div class="relative flex flex-row rounded-xl border border-sidebar-border/70 dark:border-sidebar-border p-4">
-                <div class="flex flex-row flex-1">
-                    <SearchInput />
+            <div class="relative flex flex-col rounded-xl border border-sidebar-border/70 dark:border-sidebar-border p-4">
+                <div class="relative flex flex-row mb-2">
+                    <div class="flex flex-row flex-1">
+                        <SearchInput />
+                    </div>
+                    <div class="flex flex-row ml-2">
+                        <div :class="{
+                            'flex flex-row border py-2 px-4 rounded-l-md cursor-pointer items-center': true,
+                            'font-bold border-white': currentStatusFilter === 'Active',
+                            'border-r-0': currentStatusFilter === 'Inactive',
+                        }" @click="updateStatusFilter('Active')">
+                            Active
+                        </div>
+                        <div :class="{
+                            'flex flex-row border py-2 px-4 rounded-r-md cursor-pointer items-center': true,
+                            'font-bold border-white border-l-1': currentStatusFilter === 'Inactive',
+                            'border-l-0': currentStatusFilter != 'Inactive',
+                        }" @click="updateStatusFilter('Inactive')">
+                            Inactive
+                        </div>
+                    </div>
                 </div>
-                <div class="flex flex-row ml-2">
-                    <div class="flex flex-row border py-2 px-4 rounded-l-md cursor-pointer items-center">
-                        Active
-                    </div>
-                    <div class="flex flex-row border border-l-0 py-2 px-4 rounded-r-md cursor-pointer items-center">
-                        Inactive
-                    </div>
+                <div class="flex flex-row justify-end">
+                    <a class="btn btn-primary border px-4 py-2 rounded-md" href="projects/create">New</a>
                 </div>
             </div>
             <div class="relative min-h-[100vh] p-4 flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
@@ -70,7 +98,12 @@ defineProps<{
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="project in projects.data" :key="project.id">
+                        <tr
+                            v-for="project in projects.data"
+                            :key="project.id"
+                            class="cursor-pointer"
+                            @click="navigate(`/projects/${project.id}`)"
+                        >
                             <td class="text-right">{{ project.id }}</td>
                             <td>{{ project.name }}</td>
                             <td>{{ project.status }}</td>

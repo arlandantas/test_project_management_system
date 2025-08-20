@@ -25,6 +25,11 @@ class ProjectController extends Controller
             $projects = $projects->where('name', 'like', "%{$search}%");
         }
 
+        $statusFilter = $request->get('status');
+        if ($statusFilter) {
+            $projects = $projects->where('status', $statusFilter);
+        }
+
         $projects = $projects->paginate(
             $pageSize,
             [
@@ -37,7 +42,7 @@ class ProjectController extends Controller
             ],
         )->withQueryString();
 
-        return Inertia::render('admin/projects/Index', [
+        return Inertia::render('admin/projects/Projects', [
             'projects' => $projects,
         ]);
     }
@@ -47,7 +52,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return $this->edit(new Project());
     }
 
     /**
@@ -63,7 +68,9 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return Inertia::render('admin/projects/ProjectView', [
+            'project' => $project,
+        ]);
     }
 
     /**
@@ -71,7 +78,9 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return Inertia::render('admin/projects/ProjectEdit', [
+            'project' => $project,
+        ]);
     }
 
     /**
