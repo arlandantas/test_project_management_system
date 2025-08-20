@@ -165,3 +165,16 @@
         @apply bg-background text-foreground;
     }
 }
+
+table {
+    tbody {
+        tr {
+            &:hover {
+                background-color: var(--color-muted);
+            }
+            td {
+                padding: .5em;
+            }
+        }
+    }
+}
