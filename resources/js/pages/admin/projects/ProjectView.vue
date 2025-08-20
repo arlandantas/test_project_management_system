@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
+import { Calendar, Edit } from 'lucide-vue-next'
 
 const props = defineProps<{
     project: {
@@ -12,7 +14,8 @@ const props = defineProps<{
         start_date: string;
         end_date: string;
         value: number;
-    }
+    };
+    canEdit: boolean;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -32,51 +35,32 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head :title="`Project - ${props.project.name || 'New'}`" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex flex-col min-h-[100vh] p-4 m-4 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-            <div class="col-span-2">
-                <h1 class="text-2xl font-bold">
-                    {{ props.project.name }}
-                    <span class="text-sm text-gray-500">{{ props.project.value }}</span>
-                </h1>
-                <span class="text-sm text-gray-500">{{ props.project.status }}</span>
+        <div class="grid grid-cols-[1fr_auto] min-h-[100vh] p-4 m-4 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
+            <div class="text-2xl flex flex-row items-center font-bold gap-2">
+                {{ props.project.name }}
+                <span class="text-sm text-gray-500">({{ props.project.value }})</span>
+                <span
+                    :class="{
+                        'text-sm border rounded-sm px-2 py-1': true,
+                        'text-green-500 background-green-300 border-green-500': props.project.status == 'Active',
+                        'text-red-500 background-red-300 border-red-500': props.project.status == 'Inactive'
+                    }"
+                >
+                    {{ props.project.status }}
+                </span>
             </div>
-            <div>
-                <label for="status" class="block text-sm font-medium mb-1">Status</label>
-                <Input
-                    v-model="project.status"
-                    placeholder="Status"
-                    id="status"
-                />
+            <div class="row-span-2">
+                <div class="flex flex-row justify-end mt-2 items-center" v-if="canEdit">
+                    <a :href="`/projects/${props.project.id}/edit`">
+                        <Button>
+                            <Edit class="size-5" />
+                        </Button>
+                    </a>
+                </div>
             </div>
-            <div>
-                <label for="value" class="block text-sm font-medium mb-1">Value</label>
-                <Input
-                    v-model="project.value"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="Project Value"
-                    id="value"
-                />
-            </div>
-            <div>
-                <label for="start_date" class="block text-sm font-medium mb-1">Start Date</label>
-                <Input
-                    v-model="project.start_date"
-                    type="datetime"
-                    id="start_date"
-                />
-            </div>
-            <div>
-                <label for="end_date" class="block text-sm font-medium mb-1">End Date</label>
-                <Input
-                    v-model="project.end_date"
-                    type="datetime"
-                    id="end_date"
-                />
-            </div>
-            <div class="col-span-2 flex flex-row justify-end">
-                <a :href="`/projects/${props.project.id}/edit`">Edit</a>
+            <div class="text-sm text-gray-500">
+                <Calendar class="inline size-4" />
+                {{ new Date(props.project.start_date).toLocaleDateString() }} - {{ new Date(props.project.end_date).toLocaleDateString() }} 
             </div>
         </div>
     </AppLayout>

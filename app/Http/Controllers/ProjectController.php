@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -30,17 +31,21 @@ class ProjectController extends Controller
             $projects = $projects->where('status', $statusFilter);
         }
 
-        $projects = $projects->paginate(
-            $pageSize,
-            [
-                'id',
-                'name',
-                'status',
-                'start_date',
-                'end_date',
-                'value',
-            ],
-        )->withQueryString();
+        $projects = $projects
+            ->with('creator:id,name')
+            ->paginate(
+                $pageSize,
+                [
+                    'id',
+                    'name',
+                    'status',
+                    'start_date',
+                    'end_date',
+                    'value',
+                    'creator_id',
+                ],
+            )
+            ->withQueryString();
 
         return Inertia::render('admin/projects/Projects', [
             'projects' => $projects,
@@ -60,7 +65,19 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        $user_id = $request->user()->id;
+
+        $project = new Project();
+        $project->name = $request->input('name');
+        $project->status = $request->input('status');
+        $project->start_date = $request->input('start_date');
+        $project->end_date = $request->input('end_date');
+        $project->value = $request->input('value');
+        $project->creator_id = $user_id;
+
+        $project->save();
+
+        return redirect()->route('projects.show', $project)->with('success', 'Project created successfully.');
     }
 
     /**
@@ -70,6 +87,7 @@ class ProjectController extends Controller
     {
         return Inertia::render('admin/projects/ProjectView', [
             'project' => $project,
+            'canEdit' => $project->creator_id == Auth::user()->id,
         ]);
     }
 
@@ -88,7 +106,14 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $project->name = $request->input('name');
+        $project->status = $request->input('status');
+        $project->start_date = $request->input('start_date');
+        $project->end_date = $request->input('end_date');
+        $project->value = $request->input('value');
+        $project->save();
+
+        return redirect()->route('projects.show', $project)->with('success', 'Project updated successfully.');
     }
 
     /**
@@ -96,6 +121,11 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        if ($project->creator_id == Auth::user()->id) {
+            $project->delete();
+            return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+        }
+
+        return redirect()->route('projects.index')->with('error', 'You are not authorized to delete this project.');
     }
 }
