@@ -12,7 +12,8 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $user->id === $task->creator_id;
+        return $user->id === $task->creator_id ||
+            $user->id === $task->project()->get('creator_id')->creator_id;
     }
 
     /**

@@ -5,47 +5,26 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreTaskRequest $request)
     {
-        //
-    }
+        $task = new Task();
+        $task->creator_id = Auth::user()->id;
+        $task->project_id = $request->input('project_id');
+        $task->title = $request->input('title');
+        $task->status = $request->input('status');
+        $task->due_date = $request->input('due_date');
+        $task->save();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Task $task)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
+        return redirect()
+            ->route('projects.show', [ 'project' => $task->project_id ])
+            ->with('toastSuccess', 'Task created successfully.');
     }
 
     /**
@@ -53,7 +32,14 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        $task->title = $request->input('title');
+        $task->status = $request->input('status');
+        $task->due_date = $request->input('due_date');
+        $task->save();
+
+        return redirect()
+            ->route('projects.show', [ 'project' => $task->project_id ])
+            ->with('toastSuccess', 'Task updated successfully.');
     }
 
     /**
@@ -61,6 +47,15 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        if (Auth::user()->cannot('delete', $task)) {
+            return redirect()
+                ->route('projects.show', $task->project_id)
+                ->with('toastError', 'You do not have permission to delete this task.');
+        }
+
+        $task->delete();
+        return redirect()
+            ->route('projects.show', $task->project_id)
+            ->with('toastSuccess', 'Task deleted successfully.');
     }
 }

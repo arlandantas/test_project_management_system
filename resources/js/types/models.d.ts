@@ -10,6 +10,7 @@ export interface Project {
     start_date: string;
     end_date: string;
     value: number;
+    creator_id: number;
     creator: Creator;
 };
 
@@ -19,4 +20,6 @@ export interface Task {
     status: string;
     due_date: string;
     creator: Creator;
+    creator_id: number;
+    project_id: number;
 }
