@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
     <div class="flex flex-row justify-center">
-        <div class="flex items-center">
+        <div class="flex items-center" v-if="paginator.links.length > 3">
             <a
                 v-for="(link, index) in paginator.links"
                 :href="link.url"

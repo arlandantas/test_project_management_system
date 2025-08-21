@@ -89,6 +89,9 @@ const updateStatusFilter = (status:string) => {
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="projects.data.length === 0">
+                            <td colspan="7" class="text-center text-gray-500">No projects found.</td>
+                        </tr>
                         <tr
                             v-for="project in projects.data"
                             :key="project.id"
