@@ -29,7 +29,7 @@ const props = defineProps<{
         </div>
         <div class="row-span-2">
             <div class="flex flex-row justify-end mt-2 items-center" v-if="canEdit">
-                <Link :href="`/projects/${project.id}/edit`">
+                <Link :href="route('projects.edit', project.id)">
                     <Button>
                         <Edit class="size-5" />
                     </Button>

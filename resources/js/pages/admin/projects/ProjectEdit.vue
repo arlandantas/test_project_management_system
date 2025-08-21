@@ -41,9 +41,9 @@ function submit() {
             }
         }
 
-        form.put(`/projects/${props.project.id}`);
+        form.put(route('projects.update', props.project.id));
     } else {
-        form.post('/projects');
+        form.post(route('projects.store'));
     }
 }
 
