@@ -84,11 +84,43 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Project $project)
+    public function show(Project $project, Request $request)
     {
+        $orderBy = $request->get('orderBy', 'title');
+        $orderDirection = $request->get('orderDirection', 'asc');
+        $pageSize = $request->get('pageSize', 15);
+        $tasks = $project->tasks()->orderBy($orderBy, $orderDirection);
+
+        $search = $request->get('search', '');
+        if ($search) {
+            $tasks = $tasks->where('title', 'like', "%{$search}%");
+        }
+
+        $statusFilter = $request->get('status');
+        if ($statusFilter) {
+            $tasks = $tasks->where('status', $statusFilter);
+        }
+
+        $tasks = $tasks
+            ->with('creator:id,name')
+            ->paginate(
+                $pageSize,
+                [
+                    'id',
+                    'title',
+                    'due_date',
+                    'status',
+                    'creator_id',
+                ],
+            )
+            ->withQueryString();
+
+        $project->load('creator:id,name');
+
         return Inertia::render('admin/projects/ProjectView', [
             'project' => $project,
             'canEdit' => $project->creator_id == Auth::user()->id,
+            'tasks' => $tasks,
         ]);
     }
 
