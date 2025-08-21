@@ -1,19 +1,16 @@
 <script setup lang="ts">
+import InputError from '@/components/InputError.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
+import { Label } from '@/components/ui/label';
+import Select from '@/components/ui/select/Select.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Project } from '@/types/models';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{
-    project: {
-        id: number;
-        name: string;
-        status: string;
-        start_date: string;
-        end_date: string;
-        value: number;
-    }
+    project: Project
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -66,23 +63,24 @@ function deleteProject() {
             <input type="hidden" name="_method" :value="props.project.id ? 'patch' : 'post'">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 m-4 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                 <div class="lg:col-span-2">
-                    <label for="name" class="block text-sm font-medium mb-1">Name</label>
+                    <Label for="name">Name</Label>
                     <Input
                         v-model="form.name"
                         placeholder="Project Name"
                         id="name"
                     />
+                    <div v-if="form.errors.name" class="text-sm text-red-500">{{ form.errors.name }}</div>
                 </div>
                 <div>
-                    <label for="status" class="block text-sm font-medium mb-1">Status</label>
-                    <Input
-                        v-model="form.status"
-                        placeholder="Status"
-                        id="status"
-                    />
+                    <Label for="status">Status</Label>
+                    <Select v-model="form.status" placeholder="Status">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </Select>
+                    <InputError :message="form.errors.status" />
                 </div>
                 <div>
-                    <label for="value" class="block text-sm font-medium mb-1">Value</label>
+                    <Label for="value">Value</Label>
                     <Input
                         v-model="form.value"
                         type="number"
@@ -91,25 +89,28 @@ function deleteProject() {
                         placeholder="Project Value"
                         id="value"
                     />
+                    <InputError :message="form.errors.value" />
                 </div>
                 <div>
-                    <label for="start_date" class="block text-sm font-medium mb-1">Start Date</label>
+                    <Label for="start_date">Start Date</Label>
                     <Input
                         v-model="form.start_date"
                         type="datetime-local"
                         id="start_date"
                     />
+                    <InputError :message="form.errors.start_date" />
                 </div>
                 <div>
-                    <label for="end_date" class="block text-sm font-medium mb-1">End Date</label>
+                    <Label for="end_date">End Date</Label>
                     <Input
                         v-model="form.end_date"
                         type="datetime-local"
                         id="end_date"
                     />
+                    <InputError :message="form.errors.end_date" />
                 </div>
-                <div class="lg:col-span-2 flex flex-row justify-end gap-2">
-                    <Button type="button" class="text-red-500" @click="deleteProject" v-if="props.project.id">
+                <div class="lg:col-span-2 flex flex-row justify-between gap-2">
+                    <Button type="button" variant="destructive" @click="deleteProject" v-if="props.project.id">
                         Delete
                     </Button>
                     <Button type="submit">
