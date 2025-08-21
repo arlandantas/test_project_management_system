@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import OrderableTh from '@/components/ui/table/OrderableTh.vue';
 import SearchInput from '@/components/ui/input/SearchInput.vue';
 import Pagination from '@/components/ui/table/Pagination.vue';
 import useUrl from '@/composables/useUrl';
+import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils';
+import Button from '@/components/ui/button/Button.vue';
+import { Project } from '@/types/models';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -14,25 +17,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-});
-
 defineProps<{
     projects: {
-        data: Array<{
-            id: number;
-            name: string;
-            status: string;
-            start_date: string;
-            end_date: string;
-            value: number;
-            creator: {
-                name: string;
-            };
-        }>;
+        data: Array<Project>;
         links: Array<{
             url: string;
             active: boolean;
@@ -82,10 +69,14 @@ const updateStatusFilter = (status:string) => {
                         Inactive
                     </div>
                 </div>
-                <a class="btn btn-primary border bg-gray-900 px-4 py-2 rounded-md" href="projects/create">New</a>
+                <Link :href="route('projects.create')">
+                    <Button>
+                        New
+                    </Button>
+                </Link>
             </div>
             <div class="relative min-h-[100vh] p-4 flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                <table class="w-full">
+                <table class="w-full table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -102,15 +93,15 @@ const updateStatusFilter = (status:string) => {
                             v-for="project in projects.data"
                             :key="project.id"
                             class="cursor-pointer"
-                            @click="navigate(`/projects/${project.id}`)"
+                            @click="router.visit(route('projects.show', project.id))"
                         >
                             <td class="text-right">{{ project.id }}</td>
                             <td>{{ project.name }}</td>
                             <td>{{ project.status }}</td>
                             <td>{{ project.creator.name }}</td>
-                            <td class="text-center">{{ project.start_date }}</td>
-                            <td class="text-center">{{ project.end_date }}</td>
-                            <td class="text-right">{{ currencyFormatter.format(project.value) }}</td>
+                            <td class="text-center">{{ formatDateTime(project.start_date) }}</td>
+                            <td class="text-center">{{ formatDateTime(project.end_date) }}</td>
+                            <td class="text-right">{{ formatCurrency(project.value) }}</td>
                         </tr>
                     </tbody>
                 </table>

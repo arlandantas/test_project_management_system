@@ -1,34 +1,17 @@
 <script setup lang="ts">
+import ProjectAbstract from '@/components/ProjectAbstract.vue';
 import Button from '@/components/ui/button/Button.vue';
 import OrderableTh from '@/components/ui/table/OrderableTh.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
+import { Project, Task } from '@/types/models';
 import { Head, Link } from '@inertiajs/vue3';
-import { Calendar, Edit, User } from 'lucide-vue-next'
 
 const props = defineProps<{
-    project: {
-        id: number;
-        name: string;
-        status: string;
-        start_date: string;
-        end_date: string;
-        value: number;
-        creator: {
-            name: string;
-        };
-    };
+    project: Project;
     canEdit: boolean;
     tasks: {
-        data: Array<{
-            id: number;
-            title: string;
-            status: string;
-            due_date: string;
-            creator: {
-                name: string;
-            };
-        }>;
+        data: Array<Task>;
         links: Array<{
             url: string;
             active: boolean;
@@ -55,40 +38,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-col gap-4 m-4">
-            <div class="grid grid-cols-[1fr_auto] p-4 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                <div class="text-2xl flex flex-row items-center font-bold gap-2">
-                    {{ project.name }}
-                    <span class="text-sm text-gray-500">({{ project.value }})</span>
-                    <span
-                        :class="{
-                            'text-sm border rounded-sm px-2 py-1': true,
-                            'text-green-500 background-green-300 border-green-500': project.status == 'Active',
-                            'text-red-500 background-red-300 border-red-500': project.status == 'Inactive'
-                        }"
-                    >
-                        {{ project.status }}
-                    </span>
-                </div>
-                <div class="row-span-2">
-                    <div class="flex flex-row justify-end mt-2 items-center" v-if="canEdit">
-                        <a :href="`/projects/${project.id}/edit`">
-                            <Button>
-                                <Edit class="size-5" />
-                            </Button>
-                        </a>
-                    </div>
-                </div>
-                <div class="flex flex-row justify-start gap-4">
-                    <div class="text-sm text-gray-500">
-                        <Calendar class="inline size-4" />
-                        {{ new Date(project.start_date).toLocaleDateString() }} - {{ new Date(project.end_date).toLocaleDateString() }} 
-                    </div>
-                    <div class="text-sm text-gray-500">
-                        <User class="inline size-4" />
-                        {{ project.creator.name }}
-                    </div>
-                </div>
-            </div>
+            <ProjectAbstract :project="project" :canEdit="canEdit" />
             <div class="flex flex-col border rounded-lg p-4">
                 <div class="flex flex-row justify-between items-center mb-4">
                     <span class="font-bold text-lg mx-4">Tasks</span>

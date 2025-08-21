@@ -166,7 +166,7 @@
     }
 }
 
-table {
+table.table {
     tbody {
         tr {
             &:hover {
