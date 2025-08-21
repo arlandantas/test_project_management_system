@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\enums\TaskStatus;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -112,6 +113,13 @@ class ProjectController extends Controller
         $project->end_date = $request->input('end_date');
         $project->value = $request->input('value');
         $project->save();
+
+        $taskInactiveStatus = TaskStatus::Inactive->value;
+        if ($request->input('status') == $taskInactiveStatus) {
+            $project->tasks()
+                ->where('status', '<>', $taskInactiveStatus)
+                ->update([ 'status' => $taskInactiveStatus ]);
+        }
 
         return redirect()->route('projects.show', $project)->with('success', 'Project updated successfully.');
     }

@@ -38,6 +38,12 @@ const form = useForm({
 
 function submit() {
     if (props.project.id) {
+        if (props.project.status != form.status && form.status === 'Inactive') {
+            if (!confirm('Changing status to Inactive will inactivate all associated tasks. Are you sure?')) {
+                return;
+            }
+        }
+
         form.put(`/projects/${props.project.id}`);
     } else {
         form.post('/projects');
