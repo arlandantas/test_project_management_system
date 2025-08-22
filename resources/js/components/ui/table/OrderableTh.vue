@@ -18,6 +18,7 @@ const reordenate = () => {
     if (props.isDefaultOrder) {
         url.searchParams.delete('orderBy');
     }
+    url.searchParams.delete('page');
 
     if (isOrdering) {
         if (currentOrderDirection === 'desc') {

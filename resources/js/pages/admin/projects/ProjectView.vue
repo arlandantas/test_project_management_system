@@ -4,6 +4,7 @@ import TaskEditDialog from '@/components/TaskEditDialog.vue';
 import Button from '@/components/ui/button/Button.vue';
 import SearchInput from '@/components/ui/input/SearchInput.vue';
 import OrderableTh from '@/components/ui/table/OrderableTh.vue';
+import Pagination from '@/components/ui/table/Pagination.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { formatDate } from '@/lib/utils';
 import { User, type BreadcrumbItem } from '@/types';
@@ -98,6 +99,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </tr>
                     </tbody>
                 </table>
+                <Pagination :paginator="tasks" />
             </div>
         </div>
     </AppLayout>
