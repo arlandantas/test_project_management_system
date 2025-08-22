@@ -90,8 +90,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </td>
                             <td class="text-center">{{ formatDate(task.due_date) }}</td>
                             <td>{{ task.creator.name }}</td>
-                            <td v-if="canEdit || task.creator_id == user.id" class="text-center">
-                                <TaskEditDialog :task="task">
+                            <td class="text-center">
+                                <TaskEditDialog :task="task" v-if="canEdit || task.creator_id == user.id">
                                     <Button><Edit /></Button>
                                 </TaskEditDialog>
                             </td>
