@@ -6,7 +6,7 @@ import SearchInput from '@/components/ui/input/SearchInput.vue';
 import OrderableTh from '@/components/ui/table/OrderableTh.vue';
 import Pagination from '@/components/ui/table/Pagination.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { formatDate } from '@/lib/utils';
+import { formatDateTime } from '@/lib/utils';
 import { User, type BreadcrumbItem } from '@/types';
 import { Project, Task } from '@/types/models';
 import { Head, usePage } from '@inertiajs/vue3';
@@ -89,7 +89,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     {{ task.status }}
                                 </span>
                             </td>
-                            <td class="text-center">{{ formatDate(task.due_date) }}</td>
+                            <td class="text-center">{{ formatDateTime(task.due_date) }}</td>
                             <td>{{ task.creator.name }}</td>
                             <td class="text-center">
                                 <TaskEditDialog :task="task" v-if="canEdit || task.creator_id == user.id">
