@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Label from '@/components/ui/label/Label.vue';
 import Input from '@/components/ui/input/Input.vue';
 import InputError from '@/components/InputError.vue';
@@ -28,20 +28,34 @@ const form = useForm({
     project_id: props.task?.project_id || props.projectId,
 });
 
+const hideDialog = function () {
+    if (form.hasErrors) {
+        return;
+    }
+    show.value = false;
+};
+
 const deleteTask = function () {
     if (confirm('Are you sure you want to delete this task?')) {
-        form.delete(route('tasks.destroy', props.task?.id));
-        show.value = false;
+        form.delete(route('tasks.destroy', props.task?.id), {
+            onSuccess: hideDialog,
+        });
     }
 };
 
 const save = function () {
     if (props.task?.id) {
-        form.put(route('tasks.update', props.task.id));
+        form.put(route('tasks.update', props.task.id), {
+            onSuccess: hideDialog,
+        });
     } else {
-        form.post(route('tasks.store'));
+        form.post(route('tasks.store'), {
+            onSuccess: function () {
+                hideDialog();
+                form.reset();
+            },
+        });
     }
-    show.value = false;
 };
 
 </script>
@@ -52,13 +66,15 @@ const save = function () {
             <slot />
         </DialogTrigger>
         <DialogContent>
+            <DialogTitle>{{ task?.id ? 'Edit Task' : 'Create Task' }}</DialogTitle>
+            <DialogDescription v-show="false">{{ task?.id ? ('Edit the details of the task: ' + task?.title) : 'Fill in the details to create a new task.' }}</DialogDescription>
             <div class="flex flex-col md:grid-cols-1 gap-2">
                 <Label for="title">Task Title</Label>
                 <Input id="title" v-model="form.title" type="text" placeholder="Enter task title" />
                 <InputError :message="form.errors.title" />
 
                 <Label for="due_date">Due Date</Label>
-                <Input id="due_date" v-model="form.due_date" type="date" />
+                <Input id="due_date" v-model="form.due_date" type="datetime-local" />
                 <InputError :message="form.errors.due_date" />
 
                 <Label for="status">Status</Label>
@@ -72,7 +88,7 @@ const save = function () {
                 <Label>Creator</Label>
                 <Input id="creator" :model-value="task?.creator.name || user.name" disabled />
 
-                <div class="flex flex-row justify-between">
+                <div class="flex flex-row justify-between mt-2">
                     <DialogClose>
                         <Button variant="secondary">Cancel</Button>
                     </DialogClose>
