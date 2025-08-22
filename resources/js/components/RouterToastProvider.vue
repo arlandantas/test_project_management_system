@@ -11,6 +11,7 @@ const currentToast = reactive({
     open: false,
     title: '',
     description: '',
+    type: 'success' as 'success' | 'error',
     closeTimer: null as ReturnType<typeof setTimeout> | null,
 });
 
@@ -18,7 +19,7 @@ function displayToast(type: 'success' | 'error', message: string) {
     currentToast.title = type === 'success' ? 'Success' : 'Error';
     currentToast.description = message;
     currentToast.open = true;
-    console.log(`Displaying ${type} toast:`, message);
+    currentToast.type = type;
     currentToast.closeTimer = setTimeout(() => {
         currentToast.open = false;
         currentToast.title = '';
@@ -60,19 +61,25 @@ onBeforeUnmount(() => {
 
         <ToastRoot
             v-model:open="currentToast.open"
-            class="bg-green-700 rounded-lg shadow-sm border p-[15px] grid [grid-template-areas:_'title_action'_'description_action'] grid-cols-[auto_max-content] gap-x-[15px] items-center data-[state=open]:animate-slideIn data-[state=closed]:animate-hide data-[swipe=move]:translate-x-[var(--reka-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out] data-[swipe=end]:animate-swipeOut"
+            :class="[
+                'rounded-lg shadow-sm border p-4 grid grid-cols-[auto_max-content] grid-rows-[auto_auto] gap-x-[15px] items-center data-[state=open]:animate-slideIn data-[state=closed]:animate-hide data-[swipe=move]:translate-x-[var(--reka-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out] data-[swipe=end]:animate-swipeOut',
+                {
+                    'bg-red-700': currentToast.type === 'error',
+                    'bg-green-700': currentToast.type === 'success',
+                }
+            ]"
         >
-            <ToastTitle class="[grid-area:_title] mb-[5px] font-bold text-slate12 text-sm">
+            <ToastTitle class="mb-[5px] font-bold text-slate12 text-sm">
                 {{ currentToast.title }}
             </ToastTitle>
-            <ToastDescription as-child>
-                {{ currentToast.description }}
-            </ToastDescription>
-            <ToastAction class="[grid-area:_action]" as-child alt-text="Ignore message">
+            <ToastAction class="row-span-2 my-auto" as-child alt-text="Ignore message">
                 <Button variant="link" @click="currentToast.open = false" class="cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
                     <X class="w-4 h-4" />
                 </Button>
             </ToastAction>
+            <ToastDescription as-child>
+                {{ currentToast.description }}
+            </ToastDescription>
         </ToastRoot>
         <ToastViewport class="[--viewport-padding:_25px] fixed bottom-0 right-0 flex flex-col p-[var(--viewport-padding)] gap-[10px] w-[390px] max-w-[100vw] m-0 list-none z-[2147483647] outline-none" />
     </ToastProvider>
