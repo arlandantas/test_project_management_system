@@ -3,6 +3,7 @@ import InputError from '@/components/InputError.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import { Label } from '@/components/ui/label';
+import Option from '@/components/ui/select/Option.vue';
 import Select from '@/components/ui/select/Select.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
@@ -74,8 +75,8 @@ function deleteProject() {
                 <div>
                     <Label for="status">Status</Label>
                     <Select v-model="form.status" placeholder="Status">
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        <Option value="Active">Active</Option>
+                        <Option value="Inactive">Inactive</Option>
                     </Select>
                     <InputError :message="form.errors.status" />
                 </div>

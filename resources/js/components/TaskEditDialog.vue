@@ -4,6 +4,7 @@ import Label from '@/components/ui/label/Label.vue';
 import Input from '@/components/ui/input/Input.vue';
 import InputError from '@/components/InputError.vue';
 import Select from '@/components/ui/select/Select.vue';
+import Option from '@/components/ui/select/Option.vue';
 import { Task } from '@/types/models';
 import { useForm, Form, usePage } from '@inertiajs/vue3';
 import Button from '@/components/ui/button/Button.vue';
@@ -62,9 +63,9 @@ const save = function () {
 
                 <Label for="status">Status</Label>
                 <Select id="status" v-model="form.status">
-                    <option value="Pending">Pending</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="Completed">Completed</option>
+                    <Option value="Pending">Pending</Option>
+                    <Option value="Inactive">Inactive</Option>
+                    <Option value="Completed">Completed</Option>
                 </Select>
                 <InputError :message="form.errors.status" />
 
