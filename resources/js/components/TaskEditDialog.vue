@@ -6,7 +6,7 @@ import InputError from '@/components/InputError.vue';
 import Select from '@/components/ui/select/Select.vue';
 import Option from '@/components/ui/select/Option.vue';
 import { Task } from '@/types/models';
-import { useForm, Form, usePage } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import Button from '@/components/ui/button/Button.vue';
 import { User } from '@/types';
 import { ref } from 'vue';
