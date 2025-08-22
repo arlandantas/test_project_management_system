@@ -78,7 +78,9 @@ class ProjectController extends Controller
 
         $project->save();
 
-        return redirect()->route('projects.show', $project)->with('success', 'Project created successfully.');
+        return redirect()
+            ->route('projects.show', $project)
+            ->with('toastSuccess', 'Project created successfully.');
     }
 
     /**
@@ -153,7 +155,9 @@ class ProjectController extends Controller
                 ->update([ 'status' => $taskInactiveStatus ]);
         }
 
-        return redirect()->route('projects.show', $project)->with('success', 'Project updated successfully.');
+        return redirect()
+            ->route('projects.show', $project)
+            ->with('toastSuccess', 'Project updated successfully.');
     }
 
     /**
@@ -163,9 +167,13 @@ class ProjectController extends Controller
     {
         if ($project->creator_id == Auth::user()->id) {
             $project->delete();
-            return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+            return redirect()
+                ->route('projects.index')
+                ->with('toastSuccess', 'Project deleted successfully.');
         }
 
-        return redirect()->route('projects.index')->with('error', 'You are not authorized to delete this project.');
+        return redirect()
+            ->route('projects.index')
+            ->with('toastError', 'You are not authorized to delete this project.');
     }
 }
