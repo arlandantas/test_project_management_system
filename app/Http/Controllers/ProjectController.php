@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Models\enums\TaskStatus;
 use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -121,7 +120,7 @@ class ProjectController extends Controller
 
         return Inertia::render('admin/projects/ProjectView', [
             'project' => $project,
-            'canEdit' => $project->creator_id == Auth::user()->id,
+            'canEdit' => $request->user()->can('update', $project),
             'tasks' => $tasks,
         ]);
     }
@@ -163,9 +162,9 @@ class ProjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project $project)
+    public function destroy(Project $project, Request $request)
     {
-        if ($project->creator_id == Auth::user()->id) {
+        if ($request->user()->can('delete', $project)) {
             $project->delete();
             return redirect()
                 ->route('projects.index')
@@ -173,7 +172,7 @@ class ProjectController extends Controller
         }
 
         return redirect()
-            ->route('projects.index')
+            ->route('projects.show', $project)
             ->with('toastError', 'You are not authorized to delete this project.');
     }
 }

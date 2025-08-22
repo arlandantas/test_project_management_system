@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -15,7 +15,7 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request)
     {
         $task = new Task();
-        $task->creator_id = Auth::user()->id;
+        $task->creator_id = $request->user()->id;
         $task->project_id = $request->input('project_id');
         $task->title = $request->input('title');
         $task->status = $request->input('status');
@@ -45,9 +45,9 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy(Task $task, Request $request)
     {
-        if (Auth::user()->cannot('delete', $task)) {
+        if ($request->user()->cannot('delete', $task)) {
             return redirect()
                 ->route('projects.show', $task->project_id)
                 ->with('toastError', 'You do not have permission to delete this task.');
