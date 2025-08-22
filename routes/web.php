@@ -11,8 +11,8 @@ Route::get('/', function () {
 })->middleware(['auth', 'verified'])->name('home');
 
 Route::get('/dashboard', function () {
-    return redirect('home');
-});
+    return redirect('/');
+})->name('dashboard');
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
